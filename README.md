@@ -1,0 +1,1 @@
+# Extension chrome permettant la lecture de plusieurs playlists en même temps
