@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "multi-playlists-player",
+    "version": "0.0.1",
+    "description": "placeholder",
+    "permissions": [
+        "scripting",
+        "identity",
+        "storage"
+    ],
+    "host_permissions": ["https://accounts.spotify.com/*"],
+    "oauth2": {
+        "client_id": "dff841289c504ae68da0e96bccf3e7e0",
+        "scopes": [
+          "user-read-private",
+          "user-read-email",
+          "playlist-read-private"
+        ]
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+
+
+
+
+
+    "action": {
+        "default_popup": "connection.html"
+    }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+
+
+<style>
+
+body {
+    width: 300px;
+    height: 100px;
+
+    background: linear-gradient(0.25turn,#e66465, #9198e5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#buttons-container {
+    display: flex ;
+    gap: 20px;
+}
+.connection-button {
+    max-width: 30px;
+    max-height: 30px;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: black;
+}
+
+#explain-text {
+    font-size: medium;
+}
+
+</style> 
+
+
+
+<body>
+    <div id="buttons-container">
+        <input type="image" class="connection-button" id="spotify-button" src="assets/spotify-icon.png" alt="Spotify icon">
+        <input type="image" class="connection-button" id="deezer-button" src="assets/deezer-icon.png" alt="Deezer icon">
+        <input type="image" class="connection-button" id="apple-button" src="assets/apple-music-icon.png" alt="Apple Music icon">
+        <input type="image" class="connection-button" id="youtube-button" src="assets/youtube-music-icon.png" alt="Youtube Music icon">
+    </div>
+
+    <h id="explain-text"> Connect for start using this extension </h>
+
+</body>
+
+<script src="connection.js"></script>
+
+
+</html>
