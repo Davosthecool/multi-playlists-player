@@ -1,0 +1,21 @@
+{
+  "name": "multi-playlists-player",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js",
+    "clean": "rimraf build frontend/dist backend/dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "rimraf": "^6.0.1"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0"
+  }
+}

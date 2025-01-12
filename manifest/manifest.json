@@ -18,9 +18,9 @@
         ]
     },
     "background": {
-        "service_worker": "scripts/backend.js"
+        "service_worker": "backend.js"
     },
     "action": {
-        "default_popup": "pages/connection.html"
+        "default_popup": "src/popup.html"
     }
 }
