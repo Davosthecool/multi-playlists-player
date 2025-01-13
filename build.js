@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 // Chemins des projets
 const frontendPath = path.join(__dirname, 'frontend'); 
 const backendPath = path.join(__dirname, 'backend'); 
-const assetsPath = path.join(__dirname, 'assets'); 
 const manifestPath = path.join(__dirname, 'manifest'); 
 const buildPath = path.join(__dirname, 'build');
 
@@ -40,7 +39,6 @@ async function buildAll() {
 		console.log('Copie des fichiers...');
 		await fs.copy(path.join(frontendPath, 'dist'), buildPath);
 		await fs.copy(path.join(backendPath, 'dist'), buildPath);
-		await fs.copy(assetsPath, buildPath);
 		await fs.copy(manifestPath, buildPath);
 	
 		console.log('Build terminé ! Les fichiers sont dans le dossier "build".');

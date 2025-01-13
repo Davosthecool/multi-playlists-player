@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     viteStaticCopy({
       targets: [
-        { src: '../manifest/manifest.json', dest: '' }
+        { src: '../manifest/manifest.json', dest: '' },
       ]
     })
   ],
@@ -20,7 +20,6 @@ export default defineConfig({
       },
       output: {
         entryFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
       }
     }
   }

@@ -7,11 +7,16 @@
   
   <script lang="ts">
   import { defineComponent, computed } from 'vue';
+  import { authenticateFromBackground} from '../scripts/connection.js'
   
   export default defineComponent({
     name: 'ImageButton',
     props: {
       image: {
+        type: String,
+        required: true,
+      },
+      service: {
         type: String,
         required: true,
       },
@@ -25,6 +30,7 @@
       const imagePath = computed(() => new URL(`../assets/${props.image}`, import.meta.url).href);
 
       const onClick = () => {
+        authenticateFromBackground(props.service)
         emit('click');
       };
 

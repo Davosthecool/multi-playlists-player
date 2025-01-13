@@ -3,14 +3,17 @@ import ImageButton from '../components/ImageButton.vue'
 </script>
 
 <template>
-    <div id="buttons-container">
-        <ImageButton image="spotify-icon.png"/>
-        <ImageButton image="deezer-icon.png"/>
-        <ImageButton image="apple-music-icon.png"/>
-        <ImageButton image="youtube-music-icon.png"/>
+
+    <div id="connection-container">
+        <div id="buttons-container">
+            <ImageButton image="spotify-icon.png" service="spotify"/>
+            <ImageButton image="deezer-icon.png" service="deezer"/>
+            <ImageButton image="apple-music-icon.png" service="apple"/>
+            <ImageButton image="youtube-music-icon.png" service="youtube"/>
+        </div>
+        
+        <h id="explain-text"> Connect for start using this extension </h>
     </div>
-    
-    <h id="explain-text"> Connect for start using this extension </h>
 
 </template>
 
