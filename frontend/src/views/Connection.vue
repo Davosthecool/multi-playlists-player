@@ -20,16 +20,10 @@ import ImageButton from '../components/ImageButton.vue'
 <style>
 
 body {
-    width: 300px;
-    height: 100px;
 
     background: linear-gradient(0.25turn,#e66465, #9198e5);
-
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 20px;
+
 }
 
 #buttons-container {
