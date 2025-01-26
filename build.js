@@ -34,7 +34,7 @@ async function buildAll() {
 		await runCommand('npm run build', frontendPath);
 	
 		console.log('Build du backend...');
-		await runCommand('npx tsc', backendPath);
+		await runCommand('npm run build', backendPath);
 	
 		console.log('Copie des fichiers...');
 		await fs.copy(path.join(frontendPath, 'dist'), buildPath);
