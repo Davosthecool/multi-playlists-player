@@ -7,6 +7,20 @@ export class PlaylistObject{
     ){}
 }
 
+export class TrackObject {
+    public constructor(
+        public id: string,
+        public name: string,
+        public duration: number,
+        public artists: string[],
+        public addedBy?: string,
+        public popularity?: number,
+        public explicit?: boolean,
+        public album?: string,
+        public imageUrl?: string,
+    ) {}
+}
+
 
 export function getUserPlaylistsFromBackground() {
     return new Promise<Array<PlaylistObject>>( (resolve, reject) => {

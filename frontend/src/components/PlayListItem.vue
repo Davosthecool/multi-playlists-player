@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { CCard, CCardBody, CCardImage, CCardTitle, CRow, CCol } from '@coreui/vue'
+import type { PlaylistObject } from '../scripts/fetchDatas';
+import { sendPlaylistClickedEvent } from '../scripts/sendEvents';
 
-const props = defineProps<{ name: string, imageUrl: string}>()
+const props = defineProps<{playlist: PlaylistObject}>()
 var showed_name = ""
 
-if (props.name.length > 25) {
-    showed_name = props.name.substring(0,22) + "..."
+if (props.playlist.name.length > 25) {
+    showed_name = props.playlist.name.substring(0,22) + "..."
 }else {
-    showed_name = props.name
+    showed_name = props.playlist.name
 }
+
+const onClickEvent = function() {sendPlaylistClickedEvent(props.playlist.id) }
 </script>
 
 <template>
-    <CCard class="playlist-card">
-        <CRow class="g-0">
+    <CCard class="playlist-card" :onclick="onClickEvent">
+        <CRow class="g-0 playlist-card-items">
             <CCol :xs="4">
-                <CCardImage class="playlist-card-image" :src="imageUrl" />
+                <CCardImage class="playlist-card-image" :src="playlist.imageUrl" />
             </CCol>
             <CCol :xs="8">
                 <CCardBody class="playlist-card-body">
@@ -26,7 +30,6 @@ if (props.name.length > 25) {
     </CCard>
 </template>
 
-  
 <style scoped>
 
 .playlist-card {
@@ -35,6 +38,12 @@ if (props.name.length > 25) {
     border: none;
     background-color: lightgray;
     margin-bottom: 0 !important;
+    cursor: pointer;
+}
+
+.playlist-card-items {
+    user-select: none;
+    pointer-events: none;
 }
 
 .playlist-card-image {

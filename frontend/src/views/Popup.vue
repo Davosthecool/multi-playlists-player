@@ -8,7 +8,6 @@ onMounted(async () => {
   try {
     const result = await getUserPlaylistsFromBackground();
     playlists.value = result;
-    console.log("Playlists récupérées :", result);
   } catch (error) {
     console.error("Erreur lors de la récupération des playlists :", error);
   }
@@ -16,16 +15,57 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <div v-if="playlists.length === 0" class="loading">Chargement des playlists...</div>
-    <div v-else>
-      <PlayList :playlists="playlists" />
-    </div>
-    
+  <div id="header">
+
   </div>
+  <div v-if="playlists.length === 0" class="loading"></div>
+  <div v-else id="sidebar">
+    <PlayList :playlists="playlists" />
+  </div>
+  <div id="music-player">
+
+  </div>
+
 </template>
 
-<style scoped>
+<style>
+
+body {
+  display: block;
+
+  width: 750px;
+  height: 550px;
+}
+
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 0.3fr 0.6fr;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+
+  margin : 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: black;
+}
+
+#header {
+  grid-area: header;
+}
+
+#sidebar {
+  grid-area: sidebar;
+  min-height: 100%;
+}
+
+#music-player {
+  grid-area: footer;
+}
+
 .loading {
   font-size: 1.2em;
   color: #646cff;

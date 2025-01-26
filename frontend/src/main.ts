@@ -27,11 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 chrome.runtime.onMessage.addListener(async (message, _sender, _sendResponse) => {
-    console.log("Message received:", message);
+
     if (message.action === "changePopup") {
       var appToMount = message.popupName=="connection" ? Connection : Popup
       mountApp(appToMount)
     }
-  
+
     return true;   
   });
