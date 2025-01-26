@@ -149,10 +149,13 @@ export class SpotifyDAO extends BaseDAO{
             refresh_token: token,
             grant_type: 'refresh_token'
         })
+        var encodeddata = btoa(this.CLIENT_ID + ':' + this.CLIENT_SECRET)
         var response = await fetch(
             `https://accounts.spotify.com/api/token?${bodyParams.toString()}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Basic ${encodeddata}` },
         })
 
         var accessToken = await (response.json()) as SpotifyTokenObject
@@ -169,7 +172,7 @@ export class SpotifyDAO extends BaseDAO{
                 if ( Date.now() >= token.expire_date ){
                     console.log("[SpotifyDAO] Access token expired")
                     token = await this.refreshToken(token.refresh_token)
-                    console.log("[SpotifyDAO] New token getted: " + token)
+                    console.log("[SpotifyDAO] New token getted: ", token)
                 }
                 await fetch(this.API_ENDPOINT+sub_url, {
                     headers: { 'Authorization': 'Bearer ' + token.access_token  },
