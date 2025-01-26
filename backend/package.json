@@ -2,7 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "build": "npx rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +13,9 @@
   "description": "",
   "devDependencies": {
     "@types/chrome": "^0.0.293",
+    "@types/node": "^22.10.7",
+    "rollup": "^4.30.1",
+    "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.7.3"
   }
 }
