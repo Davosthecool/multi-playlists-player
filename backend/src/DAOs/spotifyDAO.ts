@@ -2,14 +2,25 @@ import { BaseDAO, TokenObject, PlaylistObject } from "./baseDAO"
 
 class SpotifyTokenObject extends TokenObject{
 
+    expire_date : number
     public constructor( 
         public access_token: string,
-        public expires_in: number,
+        public refresh_token: string,
+        expires_in: number,
         public token_type?: string,
         public state?: string,
     ){
         super(access_token,"spotify");
+        this.expire_date = Date.now() + (expires_in*1000)
     }
+}
+
+class SpotifyAuthCodeObject{
+
+    public constructor( 
+        public auth_code: string,
+        public state: string
+    ){}
 }
 
 class SpotifyPlaylistObject extends PlaylistObject{
@@ -28,11 +39,17 @@ export class SpotifyDAO extends BaseDAO{
 
     static serviceName = "spotify";
     
+    private CLIENT_ID = "dff841289c504ae68da0e96bccf3e7e0";
+    private CLIENT_SECRET = "c109999f2eef4460b1f5b6d1ff7ad653";
+
     private API_ENDPOINT = "https://api.spotify.com/v1/"
     private AUTH_URL = `https://accounts.spotify.com/authorize`
+    private REDIRECT_URL = chrome.identity.getRedirectURL(`spotify/`)
+
     private authParameters : {[k: string]: string} = {
-        client_id : "dff841289c504ae68da0e96bccf3e7e0",
-        response_type : "token",
+        client_id : this.CLIENT_ID,
+        redirect_uri : this.REDIRECT_URL,
+        response_type : "code",
         state : "test",
         scope : "user-read-private user-read-email playlist-read-private",
         show_dialog : "true",
@@ -47,26 +64,50 @@ export class SpotifyDAO extends BaseDAO{
             params[key] = value;
         });
 
-        const access_token = params["access_token"];
-        const token_type = params["token_type"];
-        const expires_in = parseInt(params["expires_in"], 10);
-        const state = params["state"];
+        return params;
+    }
 
-        return new SpotifyTokenObject(access_token, expires_in, token_type, state);
+    private getAuthCodeFromUrlData(url: string) {
+        const params = new URL(url).searchParams
+        const auth_code = params.get("code") ?? "";
+        const state = params.get("state") ?? "";
 
+        return new SpotifyAuthCodeObject(auth_code, state);
+    }
+
+
+    private async getAuthTokenFromResponse(response: Response): Promise<SpotifyTokenObject | null> {
+        if (!response.body) { return null; }
+    
+        try {
+            const data = await response.json();
+    
+            if (!data.access_token || !data.token_type || !data.expires_in) {
+                return null;
+            }
+    
+            const access_token = data["access_token"];
+            const refresh_token = data["refresh_token"];
+            const token_type = data["token_type"];
+            const expires_in = parseInt(data["expires_in"], 10);
+            const state = data["state"] || "";
+    
+            return new SpotifyTokenObject(access_token, refresh_token, expires_in, token_type, state);
+    
+        } catch (error) {
+            throw error;
+        }
     }
 
     public async authenticate(): Promise<SpotifyTokenObject> {
-        this.authParameters['redirect_uri'] = chrome.identity.getRedirectURL(`spotify/`);
-        var params = this.authParameters
-        const authParams = new URLSearchParams(params);
-        console.log("[SpotifyDAO] Params for Authentication: " + params.toString())
+        const authParams = new URLSearchParams(this.authParameters);
+        console.log("[SpotifyDAO] Params for Authentication: ", this.authParameters)
         const url = `${this.AUTH_URL}?${authParams.toString()}`;
         console.log("[SpotifyDAO] Service Authentication url: " + url);
         return new Promise((resolve, reject) => {
             chrome.identity.launchWebAuthFlow(
                 { url: url, interactive: true },
-                (redirectUrl) => {
+                async (redirectUrl) => {
                     if (chrome.runtime.lastError) {
                         return reject(chrome.runtime.lastError.message);
                     }
@@ -76,19 +117,62 @@ export class SpotifyDAO extends BaseDAO{
                     if (redirectUrl.includes(`spotify/?error=access_denied`)) {
                         return reject("Access denied by user.");
                     }
-                    resolve(this.getAuthUrlData(redirectUrl));
+                    console.log("[SpotifyDAO] redirectUrl: ", redirectUrl);
+                    var codeObject = this.getAuthCodeFromUrlData(redirectUrl);
+                    console.log("[SpotifyDAO] Auth code getted: ", codeObject);
+                    var bodyParams = new URLSearchParams({
+                        code: codeObject.auth_code,
+                        redirect_uri: this.REDIRECT_URL,
+                        grant_type: 'authorization_code'
+                    })
+                    var encodeddata = btoa(this.CLIENT_ID + ':' + this.CLIENT_SECRET)
+                    var response = await fetch(`https://accounts.spotify.com/api/token?${bodyParams.toString()}`, {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Basic ${encodeddata}`,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                    })
+
+                    var tokenObject = await this.getAuthTokenFromResponse(response)
+                    if (tokenObject == null) {
+                        return reject("Error on getting auth token")
+                    }
+                    resolve(tokenObject);
                 }
             );
         });
+    }
+
+    private async refreshToken(token: string) : Promise<SpotifyTokenObject> {
+        var bodyParams = new URLSearchParams({
+            refresh_token: token,
+            grant_type: 'refresh_token'
+        })
+        var response = await fetch(
+            `https://accounts.spotify.com/api/token?${bodyParams.toString()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+
+        var accessToken = await (response.json()) as SpotifyTokenObject
+        BaseDAO.saveToken(accessToken,SpotifyDAO.serviceName)
+        return accessToken
     }
 
 
     private async fetchApiRequest(sub_url: string) : Promise<any>{
         return new Promise( async (resolve, reject) => {
             await BaseDAO.getStoredToken()
-            .then( async (accessToken) => { 
+            .then( async (accessToken) => {
+                var token = accessToken as SpotifyTokenObject
+                if ( Date.now() >= token.expire_date ){
+                    console.log("[SpotifyDAO] Access token expired")
+                    token = await this.refreshToken(token.refresh_token)
+                    console.log("[SpotifyDAO] New token getted: " + token)
+                }
                 await fetch(this.API_ENDPOINT+sub_url, {
-                    headers: { 'Authorization': 'Bearer ' + accessToken.access_token  },
+                    headers: { 'Authorization': 'Bearer ' + token.access_token  },
                 })
                 .then(response => { 
                     response.json()
