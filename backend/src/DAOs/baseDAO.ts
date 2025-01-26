@@ -16,6 +16,14 @@ export class PlaylistObject{
     ){}
 }
 
+export class PlaylistTrack {
+    public constructor(
+        public id: string,
+        public name: string,
+        public duration: number,
+        public artists?: string[],
+    ) {}
+}
 
 export abstract class BaseDAO {
     static serviceName: string
@@ -59,4 +67,6 @@ export abstract class BaseDAO {
 
     public abstract authenticate() : Promise<TokenObject>
     public abstract getUserPlaylists() : Promise<PlaylistObject[]>
+
+    public abstract getPlaylistTracks(playlist_id: string) : Promise<PlaylistTrack[]>
 }

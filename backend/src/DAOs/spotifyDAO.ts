@@ -1,4 +1,4 @@
-import { BaseDAO, TokenObject, PlaylistObject } from "./baseDAO"
+import { BaseDAO, TokenObject, PlaylistObject, PlaylistTrack } from "./baseDAO"
 
 class SpotifyTokenObject extends TokenObject{
 
@@ -35,6 +35,22 @@ class SpotifyPlaylistObject extends PlaylistObject{
     }
 }
 
+class SpotifyPlaylistTrack extends PlaylistTrack {
+    public constructor(
+        public id: string,
+        public name: string,
+        public addedBy: string,
+        public duration: number,
+        public popularity: number,
+        public explicit: boolean,
+        public album: string,
+        public imageUrl?: string,
+        public artists?: string[],
+    ) {
+        super(id, name, duration, artists);
+    }
+}
+
 export class SpotifyDAO extends BaseDAO{
 
     static serviceName = "spotify";
@@ -53,18 +69,6 @@ export class SpotifyDAO extends BaseDAO{
         state : "test",
         scope : "user-read-private user-read-email playlist-read-private",
         show_dialog : "true",
-    }
-    
-
-    private getAuthUrlData(url: string) {
-        const params: { [key:string] : string } = {};
-        const dataString = new URL(url).hash.replace("#", "")
-        const data = new URLSearchParams(dataString);
-        data.forEach((value, key) => {
-            params[key] = value;
-        });
-
-        return params;
     }
 
     private getAuthCodeFromUrlData(url: string) {
@@ -158,8 +162,16 @@ export class SpotifyDAO extends BaseDAO{
                 'Authorization': `Basic ${encodeddata}` },
         })
 
-        var accessToken = await (response.json()) as SpotifyTokenObject
-        BaseDAO.saveToken(accessToken,SpotifyDAO.serviceName)
+        var accessToken = await (response.json())
+        var tokenObject = new SpotifyTokenObject(
+            accessToken.access_token,
+            accessToken.refresh_token,
+            accessToken.expires_in,
+            accessToken.token_type,
+            accessToken.state
+        )
+
+        BaseDAO.saveToken(tokenObject,SpotifyDAO.serviceName)
         return accessToken
     }
 
@@ -220,6 +232,37 @@ export class SpotifyDAO extends BaseDAO{
         })
     }
 
+    public async getPlaylistTracks(playlist_id: string) : Promise<SpotifyPlaylistTrack[]> {
+        return new Promise( async (resolve, reject) => {
+            await this.fetchApiRequest(`playlists/${playlist_id}/tracks`)
+            .then(data => {
+                if (!data || !data.items || !Array.isArray(data.items)) {
+                    reject(`Error while fetching playlist tracks`);
+                }
+
+                const tracks: SpotifyPlaylistTrack[] = data.items.map((trackData: any) => {
+                    const id = trackData.track?.id;
+                    const name = trackData.track?.name;
+                    const addedBy = trackData.added_by?.external_urls?.spotify || "Unknown";
+                    const duration = trackData.track?.duration_ms;
+                    const popularity = trackData.track?.popularity;
+                    const explicit = trackData.track?.explicit;
+                    const albumName = trackData.track?.album?.name;
+                    const image = trackData.track?.album?.images?.[0]?.url;
+                    const artists = trackData.track?.artists?.map((artist: any) => artist.name);
+                
+                    return new SpotifyPlaylistTrack(id, name, addedBy, duration, popularity, explicit, albumName, image, artists);
+                });
+
+                resolve(tracks);
+            })
+            .catch((err) => {
+                reject(err)
+            })
+
+
+        })
+    }
 
 
 
