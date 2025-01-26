@@ -1,39 +1,57 @@
 <script setup lang="ts">
+import { CCard, CCardBody, CCardImage, CCardTitle, CRow, CCol } from '@coreui/vue'
 
-defineProps<{ name: string, imageUrl: string}>()
+const props = defineProps<{ name: string, imageUrl: string}>()
+var showed_name = ""
 
+if (props.name.length > 25) {
+    showed_name = props.name.substring(0,22) + "..."
+}else {
+    showed_name = props.name
+}
 </script>
 
-
 <template>
-    <!-- <div id="playlist-item-container">
-        <img src="../assets/vue.svg" alt="">
-        <p><b>{{ name }}</b></p>
-    </div> -->
-    <!-- <div class="card card-side bg-base-100 shadow-xl">
-        <figure>
-            <img
-            src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
-            alt="Album" />
-        </figure>
-        <div class="card-body">
-            <h2 class="card-title">{{ name }}</h2>
-        </div>
-    </div> -->
-    <tr>
-        <td>
-            <div class="flex items-center gap-3">
-                <div class="avatar">
-                    <div class="mask mask-squircle h-12 w-12">
-                        <img
-                        src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                        alt="Avatar Tailwind CSS Component" />
-                    </div>
-                </div>
-                <div class="w-32">
-                    <div class="font-bold">{{ name }}</div>
-                </div>
-            </div>
-        </td>
-    </tr>
+    <CCard class="playlist-card">
+        <CRow class="g-0">
+            <CCol :xs="4">
+                <CCardImage class="playlist-card-image" :src="imageUrl" />
+            </CCol>
+            <CCol :xs="8">
+                <CCardBody class="playlist-card-body">
+                    <CCardTitle class="playlist-card-title">{{ showed_name }}</CCardTitle>
+                </CCardBody>
+            </CCol>
+        </CRow>
+    </CCard>
 </template>
+
+  
+<style scoped>
+
+.playlist-card {
+    max-width: 540px;
+    padding: 0;
+    border: none;
+    background-color: lightgray;
+    margin-bottom: 0 !important;
+}
+
+.playlist-card-image {
+    box-shadow: grey 5px 0px 5px -2px;
+    border-radius: var(--cui-card-inner-border-radius) 0 0 var(--cui-card-inner-border-radius) !important;
+}
+
+.playlist-card-body {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px;
+}
+
+.playlist-card-title {
+    margin-bottom: 0;
+    width: 100%;
+}
+</style>

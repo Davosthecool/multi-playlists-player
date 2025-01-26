@@ -1,33 +1,21 @@
 <script setup lang="ts">
 import PlayListItem from './PlayListItem.vue';
-
+import { PlaylistObject } from '../scripts/fetchDatas';
 
 defineProps<{
-    playlists: Array<{name: string, imageUrl: string}>
+    playlists: PlaylistObject[]
 }>()
-
+console.error("Dans Playlist")
 </script>
 
 <template>
-    <!-- <div id="playlist-container">
+    <div id="playlist-container" class="overflow-x-auto bg-base-100">
         <PlayListItem
             v-for="(item,index) in playlists"
             :key="index"
             :name="item.name"
             :imageUrl="item.imageUrl"
         />
-    </div> -->
-    <div class="overflow-x-auto bg-base-100">
-        <table class="table">
-            <tbody>
-                <PlayListItem
-                    v-for="(item,index) in playlists"
-                    :key="index"
-                    :name="item.name"
-                    :imageUrl="item.imageUrl"
-                />
-            </tbody>
-        </table>
     </div>
 </template>
 
@@ -35,12 +23,9 @@ defineProps<{
 #playlist-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
 
-    height: 300px;
-    width: min-content;
-    overflow-y: scroll;
+    min-width: 200px;
+    height: 220px;
     gap: 20px;
     padding: 20px;
     border-radius: 5px;

@@ -50,16 +50,14 @@
     background: transparent;
     cursor: pointer;
 
-    max-width: 50px;
-    max-height: 50px;
+    width: 50px;
+    height: 50px;
     border-radius: 5px;
     padding: 5px;
     background-color: black;
   }
   
   .button-image {
-    width: 45px;
-    height: 45px;
     object-fit: scale-down;
   }
   </style>
