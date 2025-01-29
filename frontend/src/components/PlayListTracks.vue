@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TrackObject } from '../scripts/fetchDatas';
-import { CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell } from '@coreui/vue'
+import { CCard, CCardBody, CRow, CCol } from '@coreui/vue'
+import { millisToMinutesSeconds } from '../scripts/utils';
 
 defineProps<{
   tracks: TrackObject[]
@@ -8,43 +9,41 @@ defineProps<{
 </script>
 
 <template>
-
-    <!-- <CListGroup id="tracks-container">
-        <CListGroupItem as="a" href="#"
-        v-for="(item,_) in tracks">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1"> {{ item.name }} </h5>
-                <small> {{ item.duration }} </small>
-            </div>
-            <p class="mb-1"> {{ item.artists.toString().replace('[','').replace(']','') }} </p>
-            <small>Added by Placeholder</small>
-        </CListGroupItem>
-    </CListGroup> -->
-
-    <CTable align="middle" reponsive hover>
-        <CTableHead>
-            <CTableRow>
-                <CTableHeaderCell scope="col" class="w-25">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col" class="w-25">Title</CTableHeaderCell>
-                <CTableHeaderCell scope="col" class="w-25">Artists</CTableHeaderCell>
-                <CTableHeaderCell scope="col" class="w-25">Duration</CTableHeaderCell>
-            </CTableRow>
-        </CTableHead>
-        <CTableBody>
-            <CTableRow v-for="(item,index) in tracks">
-                <CTableDataCell> {{ index+1 }} </CTableDataCell>
-                <CTableDataCell> {{ item.name }} </CTableDataCell>
-                <CTableDataCell> {{ item.artists.toString().replace('[','').replace(']','') }} </CTableDataCell>
-                <CTableDataCell> {{ item.duration }} </CTableDataCell>
-            </CTableRow>
-
-        </CTableBody>
-    </CTable> 
+<CCard class="p-3 shadow-sm" id="track-card"
+v-for="(item,index) in tracks">
+    <CCardBody id="track-card-body">
+        <CRow id="track-card-row">
+            <CCol class="text-center" id="track-card-cell"> {{ index+1 }} </CCol>
+            <CCol class="text-center" id="track-card-cell"> {{ item.name }} </CCol>
+            <CCol class="text-center" id="track-card-cell"> {{ item.artists.toString().replace('[','').replace(']','') }} </CCol>
+            <CCol class="text-center" id="track-card-cell"> {{ millisToMinutesSeconds(item.duration) }} </CCol>
+        </CRow>
+    </CCardBody>
+</CCard>
 
 </template>
 
 <style scoped>
 #tracks-container {
     min-width: 500px;
+}
+
+#track-card {
+    padding: 0.5em !important;
+}
+
+#track-card-body {
+    padding: 0 !important;
+}
+
+#track-card-row {
+    gap: 5px;
+}
+
+#track-card-cell {
+    padding: 0;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    overflow: hidden !important;
 }
 </style>
