@@ -181,7 +181,7 @@ export class SpotifyDAO extends BaseDAO{
             await BaseDAO.getStoredToken()
             .then( async (accessToken) => {
                 var token = accessToken as SpotifyTokenObject
-                if ( Date.now() >= token.expire_date ){
+                if ( !token.expire_date || Date.now() >= token.expire_date ){
                     console.log("[SpotifyDAO] Access token expired")
                     token = await this.refreshToken(token.refresh_token)
                     console.log("[SpotifyDAO] New token getted: ", token)
