@@ -7,3 +7,13 @@ export function authenticateFromBackground(serviceName: string) {
     });
   });
 }
+
+export function disconnectFromBackground() {
+  return new Promise((_resolve, _reject) => {
+    chrome.runtime.sendMessage({ action: "disconnect"}, (_) => {
+      if (chrome.runtime.lastError) {
+        console.error("Erreur chrome.runtime:", chrome.runtime.lastError.message);
+      }
+    });
+  });
+}

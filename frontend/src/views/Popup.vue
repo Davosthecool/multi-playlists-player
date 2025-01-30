@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import PlayList from '../components/PlayList.vue';
 import PlayListTracks from '../components/PlayListTracks.vue';
 
+import { disconnectFromBackground } from '../scripts/connection';
 import { getUserPlaylistsFromBackground, PlaylistObject, TrackObject } from '../scripts/fetchDatas';
 
 const playlists = ref<PlaylistObject[]>([]);
@@ -26,20 +27,28 @@ onMounted(async () => {
 
 <template>
   <div class="section" id="header">
+    <div>
+
+    </div>
+
+    <div>
+
+    </div>
+
+    <div>
+      <button :onclick="disconnectFromBackground"> Disconnect </button>
+    </div>
 
   </div>
 
 
-  <div v-if="playlists.length === 0" class="section" id="sidebar">
-    <div class="loading"></div>
-  </div>
-  <div v-else class="section" id="sidebar">
-    <PlayList :playlists="playlists" />
+  <div  class="section" id="sidebar">
+    <div v-if="playlists.length === 0" class="loading"></div>
+    <PlayList v-else :playlists="playlists" />
   </div>
 
   <div class="section" id="main">
     <div v-if="tracks.length>0">
-      <button @click="tracks=[]">Back</button>
       <PlayListTracks :tracks="tracks"/>
     </div>
     
@@ -81,6 +90,9 @@ body {
 
 #header {
   grid-area: header;
+  
+  display: grid;
+  grid-template-columns: 0.4fr 0.4fr 0.2fr;
 }
 
 #sidebar {
