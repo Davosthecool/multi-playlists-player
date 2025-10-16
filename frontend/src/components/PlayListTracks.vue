@@ -29,7 +29,12 @@ v-for="(item,index) in tracks">
 }
 
 #track-card {
+    cursor: pointer;
     padding: 0.5em !important;
+    transition: 0.1s ease-in-out;
+}
+#track-card:hover {
+    background-color: lightgray;
 }
 
 #track-card-body {

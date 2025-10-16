@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import PlayList from '../components/PlayList.vue';
 import PlayListTracks from '../components/PlayListTracks.vue';
+import MusicPlayer from '../components/MusicPlayer.vue';
 
 import { disconnectFromBackground } from '../scripts/connection';
 import { getUserPlaylistsFromBackground, PlaylistObject, TrackObject } from '../scripts/fetchDatas';
@@ -57,7 +58,7 @@ onMounted(async () => {
   </div>
 
   <div class="section" id="music-player">
-
+    <MusicPlayer/>
   </div>
 
 </template>
